@@ -2,15 +2,15 @@ import React from 'react'
 import { withRouteData, Link } from 'react-static'
 //
 
-export default withRouteData(({ posts }) => (
+export default withRouteData(({ news }) => (
   <div>
     <h1>Aktualności</h1>
     <br />
     Wszystkie:
     <ul>
-      {posts.map(post => (
-        <li key={post.data.slug}>
-          <Link to={`/aktualnosci/post/${post.data.slug}`}>{post.data.title}</Link>
+      {news.map(message => (
+        <li key={message.data.slug}>
+          <Link to={`/aktualnosci/${message.data.slug}`}>{message.data.title}</Link>
         </li>
       ))}
     </ul>
