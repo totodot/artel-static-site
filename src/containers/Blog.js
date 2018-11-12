@@ -2,7 +2,9 @@ import React from 'react'
 import { withRouteData, Link } from 'react-static'
 //
 
-export default withRouteData(({ news }) => (
+export default withRouteData(({ news,tests }) => {
+  console.log(tests);
+  return (
   <div>
     <h1>Aktualności</h1>
     <br />
@@ -15,4 +17,5 @@ export default withRouteData(({ news }) => (
       ))}
     </ul>
   </div>
-))
+  )}
+)

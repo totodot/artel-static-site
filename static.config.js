@@ -1,53 +1,12 @@
-const fs = require('fs')
-const klaw = require('klaw')
-const path = require('path')
-const matter = require('gray-matter')
-
-function getNews () {
-  const items = []
-  // Walk ("klaw") through news directory and push file paths into items array //
-  const getFiles = () => new Promise(resolve => {
-    // Check if news directory exists //
-    if (fs.existsSync('./content/news')) {
-      klaw('./content/news')
-        .on('data', item => {
-          // Filter function to retrieve .md files //
-          if (path.extname(item.path) === '.md') {
-            // If markdown file, read contents //
-            const data = fs.readFileSync(item.path, 'utf8')
-            // Convert to frontmatter object and markdown content //
-            const dataObj = matter(data)
-            // Create slug for URL //
-            dataObj.data.slug = dataObj.data.title.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '')
-            // Remove unused key //
-            delete dataObj.orig
-            // Push object into items array //
-            items.push(dataObj)
-          }
-        })
-        .on('error', e => {
-          console.log(e)
-        })
-        .on('end', () => {
-          // Resolve promise for async getRoutes request //
-          // news = items for below routes //
-          resolve(items)
-        })
-    } else {
-      // If src/news directory doesn't exist, return items as empty array //
-      resolve(items)
-    }
-  })
-  return getFiles()
-}
+const getData = require('./getData');
 
 export default {
-
   getSiteData: () => ({
     title: 'React Static with Netlify CMS',
   }),
   getRoutes: async () => {
-    const news = await getNews()
+    const news = await getData('./content/news')
+    const tests = await getData('./content/tests')
     return [
       {
         path: '/',
@@ -62,12 +21,13 @@ export default {
         component: 'src/containers/Blog',
         getData: () => ({
           news,
+          tests
         }),
         children: news.map(message => ({
           path: `/${message.data.slug}`,
           component: 'src/containers/Message',
           getData: () => ({
-            message,
+            message
           }),
         })),
       },
